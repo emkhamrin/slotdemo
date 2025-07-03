@@ -1,6 +1,7 @@
+# SIMULASI TANPA TULISAN DI ATASNYA
 with st.expander("Simulasi Tanpa Animasi"):
     total_simulasi = st.number_input("Jumlah Spin Simulasi", 10, 100_000, 1000, 100)
-    
+
     if st.button("Mulai Simulasi"):
 
         modal = st.session_state.modal
@@ -35,9 +36,9 @@ with st.expander("Simulasi Tanpa Animasi"):
         st.session_state.modal = modal
         balance_area.markdown(f"**Balance: {modal} credit**")
         rtp_real = (total_kembali / (spin * harga_per_spin)) * 100
+
         st.success(f"🎯 Jackpot besar muncul di spin ke-{jackpot_ke}")
         st.info(f"Total Menang: {total_menang} | Total Kembali: {total_kembali} credit | RTP Realisasi: {rtp_real:.2f}%")
-
 
 
 
