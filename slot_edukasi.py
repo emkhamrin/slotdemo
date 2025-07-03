@@ -8,6 +8,19 @@ symbols = ['🍒', '💎', '7️⃣', '🍋', '🔔']
 weights_awal = [0.4, 0.3, 0.15, 0.1, 0.05]
 weights_sulit = [0.5, 0.3, 0.15, 0.049, 0.001]
 
+# Setting dasar
+target_rtp = st.slider("Target RTP (%)", 50, 99, 96)
+modal_awal = st.number_input("Modal Awal", 100, 100_000, 3000, 100)
+harga_per_spin = st.number_input("Harga per Spin", 10, 10_000, 100, 10)
+
+prize_table = {
+    '🍒': 5 * harga_per_spin,
+    '💎': 10 * harga_per_spin,
+    '7️⃣': 50 * harga_per_spin,
+    '🍋': 15 * harga_per_spin,
+    '🔔': 5000 * harga_per_spin
+}
+
 # Inisialisasi State
 if "modal" not in st.session_state:
     st.session_state.modal = 3000
@@ -21,26 +34,12 @@ if "counter_spin" not in st.session_state:
     st.session_state.counter_spin = 0
 if "total_biaya" not in st.session_state:
     st.session_state.total_biaya = 0
-
-st.title("🎰 Slot Edukasi Anti Judi 💸")
-
-# Setting dasar
-modal_awal = st.number_input("Modal Awal", 100, 100_000, 3000, 100)
-harga_per_spin = st.number_input("Harga per Spin", 10, 10_000, 100, 10)
-target_rtp = st.slider("Target RTP (%)", 50, 99, 96)
-
-prize_table = {
-    '🍒': 5 * harga_per_spin,
-    '💎': 10 * harga_per_spin,
-    '7️⃣': 50 * harga_per_spin,
-    '🍋': 15 * harga_per_spin,
-    '🔔': 5000 * harga_per_spin
-}
-
 if "jackpot_min_biaya" not in st.session_state:
     jackpot_payout = prize_table['🔔']
     total_bet_minimal = int(jackpot_payout / (target_rtp / 100))
     st.session_state.jackpot_min_biaya = total_bet_minimal
+
+st.title("🎰 Slot Edukasi Anti Judi 💸")
 
 if st.button("Reset Modal & Setup"):
     st.session_state.modal = modal_awal
@@ -85,7 +84,8 @@ if st.button("Spin Sekali"):
             hasil = ['🔔', '🔔', '🔔']
             hadiah = prize_table['🔔']
             st.session_state.jackpot_terjadi = True
-            st.session_state.jackpot_min_biaya += int(hadiah / (target_rtp / 100))
+            jackpot_payout = prize_table['🔔']
+            st.session_state.jackpot_min_biaya += int(jackpot_payout / (target_rtp / 100))
         elif hasil[0] == hasil[1] == hasil[2]:
             hadiah = prize_table.get(hasil[0], 0)
 
@@ -121,7 +121,8 @@ if st.button("Start Auto Spin"):
             hasil = ['🔔', '🔔', '🔔']
             hadiah = prize_table['🔔']
             st.session_state.jackpot_terjadi = True
-            st.session_state.jackpot_min_biaya += int(hadiah / (target_rtp / 100))
+            jackpot_payout = prize_table['🔔']
+            st.session_state.jackpot_min_biaya += int(jackpot_payout / (target_rtp / 100))
         elif hasil[0] == hasil[1] == hasil[2]:
             hadiah = prize_table.get(hasil[0], 0)
 
@@ -182,6 +183,7 @@ if st.button("Mulai Simulasi"):
     rtp_real = (total_kembali / (spin * harga_per_spin)) * 100 if spin > 0 else 0
 
     st.info(f"Total Menang: {total_menang} | Total Kembali: {total_kembali} credit | RTP Realisasi: {rtp_real:.2f}%")
+
 
 
 
