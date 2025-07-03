@@ -155,7 +155,7 @@ with st.expander("Auto Spin (Advanced Setting)"):
                 simbol_menang = hasil_final[0]
                 hadiah = prize_table.get(simbol_menang, 0)
 
-            if st.session_state.total_kembali + hadiah <= (harga_per_spin * target_rtp * 0.01):
+            if st.session_state.total_kembali + hadiah <= (harga_per_spin * total_spin_auto * target_rtp * 0.01):
                 st.session_state.modal += hadiah
                 st.session_state.total_kembali += hadiah
 
@@ -176,6 +176,8 @@ with st.expander("Auto Spin (Advanced Setting)"):
                 hasil_area.empty()
 
             time.sleep(0.1)
+
+            saldo_area.markdown(f"<div class='balance-box'>Balance: {st.session_state.modal} credit</div>", unsafe_allow_html=True)
 
 with st.expander("Simulasi Tanpa Animasi"):
     total_spin_sim = st.number_input("Total Spin Simulasi", min_value=10, value=1000, step=100)
@@ -219,5 +221,6 @@ with st.expander("Simulasi Tanpa Animasi"):
         rtp_real = (total_kembali / (spin * harga_per_spin)) * 100 if spin > 0 else 0
         st.info(f"Total Kemenangan: {total_kembali} credit | Total Menang: {total_menang} | RTP Realisasi: {rtp_real:.2f}%")
         st.info(f"Jackpot besar keluar di spin ke-{jackpot_ke}")
+
 
 
