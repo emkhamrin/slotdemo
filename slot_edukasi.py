@@ -120,12 +120,12 @@ if col1.button("Spin Sekali"):
         st.session_state.grid_display = hasil_final
 
         grid_html = "<div class='slot-grid'>"
-        for i, s in enumerate(hasil_final):
+        for s in hasil_final:
             warna = "gold" if hadiah > 0 else "white"
             grid_html += f"<div class='slot-cell' style='color:{warna};'>{s}</div>"
         grid_html += "</div>"
-        grid_area.markdown(grid_html, unsafe_allow_html=True)
 
+        grid_area.markdown(grid_html, unsafe_allow_html=True)
         saldo_area.markdown(f"<div class='balance-box'>Balance: {st.session_state.modal} credit</div>", unsafe_allow_html=True)
 
         if hadiah > 0:
@@ -162,12 +162,12 @@ with st.expander("Auto Spin (Advanced Setting)"):
             st.session_state.grid_display = hasil_final
 
             grid_html = "<div class='slot-grid'>"
-            for i, s in enumerate(hasil_final):
+            for s in hasil_final:
                 warna = "gold" if hadiah > 0 else "white"
                 grid_html += f"<div class='slot-cell' style='color:{warna};'>{s}</div>"
             grid_html += "</div>"
-            grid_area.markdown(grid_html, unsafe_allow_html=True)
 
+            grid_area.markdown(grid_html, unsafe_allow_html=True)
             saldo_area.markdown(f"<div class='balance-box'>Balance: {st.session_state.modal} credit</div>", unsafe_allow_html=True)
 
             if hadiah > 0:
@@ -176,8 +176,6 @@ with st.expander("Auto Spin (Advanced Setting)"):
                 hasil_area.empty()
 
             time.sleep(0.1)
-
-            saldo_area.markdown(f"<div class='balance-box'>Balance: {st.session_state.modal} credit</div>", unsafe_allow_html=True)
 
 with st.expander("Simulasi Tanpa Animasi"):
     total_spin_sim = st.number_input("Total Spin Simulasi", min_value=10, value=1000, step=100)
@@ -221,6 +219,7 @@ with st.expander("Simulasi Tanpa Animasi"):
         rtp_real = (total_kembali / (spin * harga_per_spin)) * 100 if spin > 0 else 0
         st.info(f"Total Kemenangan: {total_kembali} credit | Total Menang: {total_menang} | RTP Realisasi: {rtp_real:.2f}%")
         st.info(f"Jackpot besar keluar di spin ke-{jackpot_ke}")
+
 
 
 
