@@ -96,7 +96,8 @@ if col1.button("Spin Sekali"):
         simbol_menang = hasil_final[4]
         hadiah = prize_table.get(simbol_menang, 0) * harga_per_spin
 
-    st.session_state.modal += hadiah - harga_per_spin
+    st.session_state.modal -= harga_per_spin
+    st.session_state.modal += hadiah
 
     grid_html = "<div class='slot-grid'>"
     for i, s in enumerate(hasil_final):
@@ -130,16 +131,17 @@ with st.expander("Auto Spin Advanced Setting"):
                 simbol_menang = hasil_final[4]
                 hadiah = prize_table.get(simbol_menang, 0) * harga_per_spin
 
-            modal -= harga_per_spin
+            if modal < harga_per_spin:
+                st.error(f"Modal habis di spin ke-{spin}")
+                break
 
-            if total_kembali + hadiah <= max_total_kembali:
-                if hadiah > 0:
-                    modal += hadiah
-                    total_kembali += hadiah
-                    total_menang += 1
+            modal -= harga_per_spin
+            if total_kembali + hadiah <= max_total_kembali and hadiah > 0:
+                modal += hadiah
+                total_kembali += hadiah
+                total_menang += 1
 
             saldo_area.markdown(f"<div class='balance-box'>Balance: {modal} credit</div>", unsafe_allow_html=True)
-
             st.session_state.grid_display = hasil_final
 
             grid_html = "<div class='slot-grid'>"
@@ -150,9 +152,6 @@ with st.expander("Auto Spin Advanced Setting"):
             grid_area.markdown(grid_html, unsafe_allow_html=True)
 
             time.sleep(0.2)
-            if modal <= 0:
-                st.error(f"Modal habis di spin ke-{spin}")
-                break
 
         st.session_state.modal = modal
         hasil_area.empty()
@@ -178,21 +177,20 @@ if st.button("Simulate"):
             simbol_menang = hasil_final[4]
             hadiah = prize_table.get(simbol_menang, 0) * harga_per_spin
 
-        modal -= harga_per_spin
-
-        if total_kembali + hadiah <= max_total_kembali:
-            if hadiah > 0:
-                modal += hadiah
-                total_kembali += hadiah
-                total_menang += 1
-
-        if modal <= 0:
+        if modal < harga_per_spin:
             st.warning(f"Modal habis di spin ke-{spin}")
             break
 
+        modal -= harga_per_spin
+
+        if total_kembali + hadiah <= max_total_kembali and hadiah > 0:
+            modal += hadiah
+            total_kembali += hadiah
+            total_menang += 1
+
     st.session_state.modal = modal
     saldo_area.markdown(f"<div class='balance-box'>Balance: {modal} credit</div>", unsafe_allow_html=True)
-    rtp_real = (total_kembali / (spin * harga_per_spin)) * 100
+    rtp_real = (total_kembali / (spin * harga_per_spin)) * 100 if spin > 0 else 0
     st.info(f"Total Kemenangan: {total_kembali} credit | Total Menang: {total_menang} | RTP Realisasi: {rtp_real:.2f}%")
 
 
