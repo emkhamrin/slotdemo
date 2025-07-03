@@ -47,7 +47,6 @@ if st.button("Reset Modal & Setup"):
     st.session_state.total_biaya = 0
     st.session_state.grid_display = random.choices(symbols, weights_awal, k=3)
     jackpot_payout = prize_table['🔔']
-    # Total biaya minimum = Payout jackpot ditambah biaya acak antara 300-500 spin
     st.session_state.jackpot_min_biaya = int(jackpot_payout * 1.05) + random.randint(harga_per_spin * 300, harga_per_spin * 500)
 
 # Area Tampilan
@@ -183,6 +182,7 @@ with st.expander("Simulasi Tanpa Animasi"):
         rtp_real = (total_kembali / (spin * harga_per_spin)) * 100 if spin > 0 else 0
 
         st.info(f"Total Menang: {total_menang} | Total Kembali: {total_kembali} credit | RTP Realisasi: {rtp_real:.2f}%")
+
 
 
 
