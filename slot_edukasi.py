@@ -129,6 +129,9 @@ with st.expander("Auto Spin (Advanced Setting)"):
 
 # SIMULASI
 with st.expander("Simulasi Tanpa Animasi"):
+    st.info(f"🎯 Jackpot besar akan muncul di spin ke-{st.session_state.jackpot_spin}")
+    st.info(f"💡 Total Kembali: {st.session_state.total_kembali} credit | RTP Sementara: {(st.session_state.total_kembali / (st.session_state.counter_spin * harga_per_spin) * 100) if st.session_state.counter_spin else 0:.2f}%")
+
     total_simulasi = st.number_input("Jumlah Spin Simulasi", 10, 100_000, 1000, 100)
     if st.button("Mulai Simulasi"):
 
@@ -164,8 +167,9 @@ with st.expander("Simulasi Tanpa Animasi"):
         st.session_state.modal = modal
         balance_area.markdown(f"**Balance: {modal} credit**")
         rtp_real = (total_kembali / (spin * harga_per_spin)) * 100
-        notif_area.info(f"Total Menang: {total_menang} | Total Kembali: {total_kembali} credit | RTP Realisasi: {rtp_real:.2f}%")
-        notif_area.info(f"Jackpot besar muncul di spin ke-{jackpot_ke}")
+        st.success(f"🎯 Jackpot besar muncul di spin ke-{jackpot_ke}")
+        st.info(f"Total Menang: {total_menang} | Total Kembali: {total_kembali} credit | RTP Realisasi: {rtp_real:.2f}%")
+
 
 
 
