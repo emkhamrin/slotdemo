@@ -44,16 +44,16 @@ if st.button("Reset Modal & Setup"):
     st.session_state.total_kembali = 0
     st.session_state.jackpot_terjadi = False
     st.session_state.counter_spin = 0
+    st.session_state.total_biaya = 0
     st.session_state.grid_display = random.choices(symbols, weights_awal, k=3)
-    if st.session_state.jackpot_min_biaya == 0:
-        jackpot_payout = prize_table['🔔']
-        st.session_state.jackpot_min_biaya = int(jackpot_payout * 1.05)
+    jackpot_payout = prize_table['🔔']
+    # Total biaya minimum = Payout jackpot ditambah biaya acak antara 300-500 spin
+    st.session_state.jackpot_min_biaya = int(jackpot_payout * 1.05) + random.randint(harga_per_spin * 300, harga_per_spin * 500)
 
 # Area Tampilan
 grid_area = st.empty()
 balance_area = st.empty()
 notif_area = st.empty()
-
 
 def tampilkan_grid(hasil, warna="white"):
     grid_html = "<div style='display:grid;grid-template-columns:repeat(3,80px);gap:5px;'>"
@@ -61,7 +61,6 @@ def tampilkan_grid(hasil, warna="white"):
         grid_html += f"<div style='border:2px solid gold;padding:10px;text-align:center;font-size:30px;color:{warna};'>{s}</div>"
     grid_html += "</div>"
     grid_area.markdown(grid_html, unsafe_allow_html=True)
-
 
 tampilkan_grid(st.session_state.grid_display)
 balance_area.markdown(f"**Balance: {st.session_state.modal} credit**")
@@ -83,7 +82,7 @@ if st.button("Spin Sekali"):
             hasil = ['🔔', '🔔', '🔔']
             hadiah = prize_table['🔔']
             st.session_state.jackpot_terjadi = True
-            st.session_state.jackpot_min_biaya += int(prize_table['🔔'] * 1.05)
+            st.session_state.jackpot_min_biaya += int(prize_table['🔔'] * 1.05) + random.randint(harga_per_spin * 300, harga_per_spin * 500)
         elif hasil[0] == hasil[1] == hasil[2]:
             hadiah = prize_table.get(hasil[0], 0)
 
@@ -120,7 +119,7 @@ with st.expander("Auto Spin (Advanced Setting)"):
                 hasil = ['🔔', '🔔', '🔔']
                 hadiah = prize_table['🔔']
                 st.session_state.jackpot_terjadi = True
-                st.session_state.jackpot_min_biaya += int(prize_table['🔔'] * 1.05)
+                st.session_state.jackpot_min_biaya += int(prize_table['🔔'] * 1.05) + random.randint(harga_per_spin * 300, harga_per_spin * 500)
             elif hasil[0] == hasil[1] == hasil[2]:
                 hadiah = prize_table.get(hasil[0], 0)
 
