@@ -30,11 +30,11 @@ harga_per_spin = st.number_input("Harga per Spin", 10, 10_000, 100, 10)
 target_rtp = st.slider("Target RTP (%)", 50, 99, 96)
 
 prize_table = {
-    '🍒': 5 * harga_per_spin,
-    '💎': 10 * harga_per_spin,
-    '7️⃣': 50 * harga_per_spin,
-    '🍋': 15 * harga_per_spin,
-    '🔔': 5000 * harga_per_spin
+    '🍒': 5,
+    '💎': 10,
+    '7️⃣': 50,
+    '🍋': 15,
+    '🔔': 5000
 }
 
 if st.button("Reset Modal & Setup"):
@@ -74,10 +74,10 @@ if st.button("Spin Sekali"):
 
         if st.session_state.counter_spin == st.session_state.jackpot_spin:
             hasil = ['🔔', '🔔', '🔔']
-            hadiah = prize_table['🔔']
+            hadiah = prize_table['🔔'] * harga_per_spin
             st.session_state.jackpot_terjadi = True
         elif hasil[0] == hasil[1] == hasil[2]:
-            hadiah = prize_table.get(hasil[0], 0)
+            hadiah = prize_table.get(hasil[0], 0) * harga_per_spin
 
         if st.session_state.total_kembali + hadiah <= (harga_per_spin * target_rtp * 0.01 * st.session_state.counter_spin):
             st.session_state.modal += hadiah
@@ -110,10 +110,10 @@ with st.expander("Auto Spin (Advanced Setting)"):
 
             if st.session_state.counter_spin == st.session_state.jackpot_spin:
                 hasil = ['🔔', '🔔', '🔔']
-                hadiah = prize_table['🔔']
+                hadiah = prize_table['🔔'] * harga_per_spin
                 st.session_state.jackpot_terjadi = True
             elif hasil[0] == hasil[1] == hasil[2]:
-                hadiah = prize_table.get(hasil[0], 0)
+                hadiah = prize_table.get(hasil[0], 0) * harga_per_spin
 
             if st.session_state.total_kembali + hadiah <= (harga_per_spin * target_rtp * 0.01 * st.session_state.counter_spin):
                 st.session_state.modal += hadiah
@@ -155,10 +155,10 @@ with st.expander("Simulasi Tanpa Animasi"):
 
             if spin == jackpot_ke:
                 hasil = ['🔔', '🔔', '🔔']
-                hadiah = prize_table['🔔']
+                hadiah = prize_table['🔔'] * harga_per_spin
                 jackpot_terjadi = True
             elif hasil[0] == hasil[1] == hasil[2]:
-                hadiah = prize_table.get(hasil[0], 0)
+                hadiah = prize_table.get(hasil[0], 0) * harga_per_spin
 
             if total_kembali + hadiah <= (harga_per_spin * total_simulasi * target_rtp * 0.01):
                 modal += hadiah
@@ -171,6 +171,7 @@ with st.expander("Simulasi Tanpa Animasi"):
 
         st.success(f"🎯 Jackpot besar muncul di spin ke-{jackpot_ke}")
         st.info(f"Total Menang: {total_menang} | Total Kembali: {total_kembali} credit | RTP Realisasi: {rtp_real:.2f}%")
+
 
 
 
