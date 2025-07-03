@@ -220,3 +220,4 @@ with st.expander("Simulasi Tanpa Animasi"):
         st.info(f"Total Kemenangan: {total_kembali} credit | Total Menang: {total_menang} | RTP Realisasi: {rtp_real:.2f}%")
         st.info(f"Jackpot besar keluar di spin ke-{jackpot_ke}")
 
+
