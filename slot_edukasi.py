@@ -38,14 +38,6 @@ st.markdown("""
     background-color: #442200;
     color: white;
 }
-.spin-btn {
-    background-color: red;
-    color: white;
-    padding: 10px 20px;
-    font-size: 20px;
-    border-radius: 50%;
-    border: none;
-}
 .balance-box {
     background-color: #222;
     padding: 8px;
@@ -70,25 +62,29 @@ st.markdown("""
 
 st.title("🎰 Chinese Luck - Slot Edukasi Anti Judi")
 
-saldo_area = st.empty()
-grid_area = st.empty()
-hasil_area = st.empty()
+if "modal" not in st.session_state:
+    st.session_state.modal = 3000
+if "grid_display" not in st.session_state:
+    st.session_state.grid_display = random.choices(symbols, weights_awal, k=12)
 
 modal_awal = st.number_input("Modal Awal", min_value=100, value=3000, step=100)
 harga_per_spin = st.number_input("Harga per Spin", min_value=10, value=100, step=10)
 target_rtp = st.slider("Target RTP (%)", min_value=50, max_value=99, value=96)
 
-if "grid_display" not in st.session_state:
-    st.session_state.grid_display = random.choices(symbols, weights_awal, k=12)
+if st.button("Reset Modal"):
+    st.session_state.modal = modal_awal
 
-# Tampilkan grid selalu
+saldo_area = st.empty()
+grid_area = st.empty()
+hasil_area = st.empty()
+
+# Grid selalu tampil
 grid_html = "<div class='slot-grid'>"
 for s in st.session_state.grid_display:
     grid_html += f"<div class='slot-cell'>{s}</div>"
 grid_html += "</div>"
 grid_area.markdown(grid_html, unsafe_allow_html=True)
-
-saldo_area.markdown(f"<div class='balance-box'>Balance: {modal_awal} credit</div>", unsafe_allow_html=True)
+saldo_area.markdown(f"<div class='balance-box'>Balance: {st.session_state.modal} credit</div>", unsafe_allow_html=True)
 
 col1, col2, col3 = st.columns(3)
 if col1.button("Spin Sekali"):
@@ -100,6 +96,8 @@ if col1.button("Spin Sekali"):
         simbol_menang = hasil_final[4]
         hadiah = prize_table.get(simbol_menang, 0) * harga_per_spin
 
+    st.session_state.modal += hadiah - harga_per_spin
+
     grid_html = "<div class='slot-grid'>"
     for i, s in enumerate(hasil_final):
         warna = "gold" if hadiah > 0 and i in [4,5,6] else "white"
@@ -107,67 +105,72 @@ if col1.button("Spin Sekali"):
     grid_html += "</div>"
     grid_area.markdown(grid_html, unsafe_allow_html=True)
 
-    modal_awal += hadiah - harga_per_spin
-    saldo_area.markdown(f"<div class='balance-box'>Balance: {modal_awal} credit</div>", unsafe_allow_html=True)
+    saldo_area.markdown(f"<div class='balance-box'>Balance: {st.session_state.modal} credit</div>", unsafe_allow_html=True)
 
     if hadiah > 0:
         hasil_area.markdown(f"<div class='big-win'>YOU WIN {hadiah} credit!</div>", unsafe_allow_html=True)
     else:
         hasil_area.empty()
 
-if col2.button("Auto Spin"):
-    with st.expander("Auto Spin Advanced Setting"):
-        total_spin = st.number_input("Total Spin Auto", min_value=10, value=50, step=10, key="autospin")
-        if st.button("Mulai Auto Spin"):
-            total_biaya = total_spin * harga_per_spin
-            max_total_kembali = total_biaya * (target_rtp / 100)
+with st.expander("Auto Spin Advanced Setting"):
+    total_spin = st.number_input("Total Spin Auto", min_value=10, value=50, step=10)
+    if st.button("Mulai Auto Spin"):
+        total_biaya = total_spin * harga_per_spin
+        max_total_kembali = total_biaya * (target_rtp / 100)
 
-            modal = modal_awal
-            total_kembali = 0
+        modal = st.session_state.modal
+        total_kembali = 0
+        total_menang = 0
 
-            for spin in range(1, total_spin + 1):
-                hasil_final = random.choices(symbols, weights_awal, k=12)
-                hadiah = 0
+        for spin in range(1, total_spin + 1):
+            hasil_final = random.choices(symbols, weights_awal, k=12)
+            hadiah = 0
 
-                if hasil_final[4] == hasil_final[5] == hasil_final[6]:
-                    simbol_menang = hasil_final[4]
-                    hadiah = prize_table.get(simbol_menang, 0) * harga_per_spin
+            if hasil_final[4] == hasil_final[5] == hasil_final[6]:
+                simbol_menang = hasil_final[4]
+                hadiah = prize_table.get(simbol_menang, 0) * harga_per_spin
 
-                modal -= harga_per_spin
+            modal -= harga_per_spin
 
-                if total_kembali + hadiah <= max_total_kembali:
-                    if hadiah > 0:
-                        modal += hadiah
-                        total_kembali += hadiah
+            if total_kembali + hadiah <= max_total_kembali:
+                if hadiah > 0:
+                    modal += hadiah
+                    total_kembali += hadiah
+                    total_menang += 1
 
-                saldo_area.markdown(f"<div class='balance-box'>Balance: {modal} credit</div>", unsafe_allow_html=True)
+            saldo_area.markdown(f"<div class='balance-box'>Balance: {modal} credit</div>", unsafe_allow_html=True)
 
-                st.session_state.grid_display = hasil_final
+            st.session_state.grid_display = hasil_final
 
-                grid_html = "<div class='slot-grid'>"
-                for i, s in enumerate(hasil_final):
-                    warna = "gold" if hadiah > 0 and i in [4,5,6] else "white"
-                    grid_html += f"<div class='slot-cell' style='color:{warna};'>{s}</div>"
-                grid_html += "</div>"
-                grid_area.markdown(grid_html, unsafe_allow_html=True)
+            grid_html = "<div class='slot-grid'>"
+            for i, s in enumerate(hasil_final):
+                warna = "gold" if hadiah > 0 and i in [4,5,6] else "white"
+                grid_html += f"<div class='slot-cell' style='color:{warna};'>{s}</div>"
+            grid_html += "</div>"
+            grid_area.markdown(grid_html, unsafe_allow_html=True)
 
-                time.sleep(0.2)
-                if modal <= 0:
-                    st.error("Modal habis")
-                    break
-            hasil_area.empty()
+            time.sleep(0.2)
+            if modal <= 0:
+                st.error(f"Modal habis di spin ke-{spin}")
+                break
 
-if col3.button("Simulate Tanpa Animasi"):
-    total_spin = st.number_input("Total Spin Simulasi", min_value=10, value=1000, step=100)
+        st.session_state.modal = modal
+        hasil_area.empty()
+        st.success(f"Auto Spin selesai. Total Menang: {total_menang}")
 
-    total_biaya = total_spin * harga_per_spin
+st.markdown("---")
+
+st.subheader("Simulasi Tanpa Animasi")
+total_spin_sim = st.number_input("Total Spin Simulasi", min_value=10, value=1000, step=100)
+if st.button("Simulate"):
+    total_biaya = total_spin_sim * harga_per_spin
     max_total_kembali = total_biaya * (target_rtp / 100)
 
-    modal = modal_awal
+    modal = st.session_state.modal
     total_kembali = 0
     total_menang = 0
 
-    for spin in range(1, total_spin + 1):
+    for spin in range(1, total_spin_sim + 1):
         hasil_final = random.choices(symbols, weights_awal, k=12)
         hadiah = 0
 
@@ -184,9 +187,12 @@ if col3.button("Simulate Tanpa Animasi"):
                 total_menang += 1
 
         if modal <= 0:
+            st.warning(f"Modal habis di spin ke-{spin}")
             break
 
+    st.session_state.modal = modal
     saldo_area.markdown(f"<div class='balance-box'>Balance: {modal} credit</div>", unsafe_allow_html=True)
-    st.success(f"Simulasi selesai. Total Menang: {total_menang}")
+    rtp_real = (total_kembali / (spin * harga_per_spin)) * 100
+    st.info(f"Total Kemenangan: {total_kembali} credit | Total Menang: {total_menang} | RTP Realisasi: {rtp_real:.2f}%")
 
 
