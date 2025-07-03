@@ -79,9 +79,8 @@ if st.button("Spin Sekali"):
         elif hasil[0] == hasil[1] == hasil[2]:
             hadiah = prize_table.get(hasil[0], 0) * harga_per_spin
 
-        if st.session_state.total_kembali + hadiah <= (harga_per_spin * target_rtp * 0.01 * st.session_state.counter_spin):
-            st.session_state.modal += hadiah
-            st.session_state.total_kembali += hadiah
+        st.session_state.modal += hadiah
+        st.session_state.total_kembali += hadiah
 
         st.session_state.grid_display = hasil
         tampilkan_grid(hasil, "gold" if hadiah > 0 else "white")
@@ -90,7 +89,7 @@ if st.button("Spin Sekali"):
         if hadiah > 0:
             notif_area.success(f"🎉 Menang {hadiah} credit!")
         else:
-            notif_area.empty()
+            notif_area.info("Belum Menang.")
 
 # Auto Spin dengan Setting Jumlah
 with st.expander("Auto Spin (Advanced Setting)"):
@@ -115,9 +114,8 @@ with st.expander("Auto Spin (Advanced Setting)"):
             elif hasil[0] == hasil[1] == hasil[2]:
                 hadiah = prize_table.get(hasil[0], 0) * harga_per_spin
 
-            if st.session_state.total_kembali + hadiah <= (harga_per_spin * target_rtp * 0.01 * st.session_state.counter_spin):
-                st.session_state.modal += hadiah
-                st.session_state.total_kembali += hadiah
+            st.session_state.modal += hadiah
+            st.session_state.total_kembali += hadiah
 
             st.session_state.grid_display = hasil
             tampilkan_grid(hasil, "gold" if hadiah > 0 else "white")
@@ -126,7 +124,7 @@ with st.expander("Auto Spin (Advanced Setting)"):
             if hadiah > 0:
                 notif_area.success(f"🎉 Menang {hadiah} credit!")
             else:
-                notif_area.empty()
+                notif_area.info("Belum Menang.")
 
             time.sleep(0.1)
 
@@ -160,10 +158,9 @@ with st.expander("Simulasi Tanpa Animasi"):
             elif hasil[0] == hasil[1] == hasil[2]:
                 hadiah = prize_table.get(hasil[0], 0) * harga_per_spin
 
-            if total_kembali + hadiah <= (harga_per_spin * total_simulasi * target_rtp * 0.01):
-                modal += hadiah
-                total_kembali += hadiah
-                total_menang += 1
+            modal += hadiah
+            total_kembali += hadiah
+            total_menang += 1 if hadiah > 0 else 0
 
         st.session_state.modal = modal
         balance_area.markdown(f"**Balance: {modal} credit**")
@@ -171,6 +168,7 @@ with st.expander("Simulasi Tanpa Animasi"):
 
         st.success(f"🎯 Jackpot besar muncul di spin ke-{jackpot_ke}")
         st.info(f"Total Menang: {total_menang} | Total Kembali: {total_kembali} credit | RTP Realisasi: {rtp_real:.2f}%")
+
 
 
 
