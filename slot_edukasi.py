@@ -8,6 +8,7 @@ symbols = ['🍒', '💎', '7️⃣', '🍋', '🔔']
 weights_awal = [0.4, 0.3, 0.15, 0.1, 0.05]
 weights_sulit = [0.5, 0.3, 0.15, 0.049, 0.001]
 
+# Session Init
 if "modal" not in st.session_state:
     st.session_state.modal = 3000
 if "grid_display" not in st.session_state:
@@ -39,20 +40,27 @@ if st.button("Reset Modal"):
     st.session_state.jackpot_spin = random.randint(1, 100_000)
     st.session_state.jackpot_terjadi = False
     st.session_state.counter_spin = 0
+    st.session_state.grid_display = random.choices(symbols, weights_awal, k=3)
+
+# Tempat khusus Balance & Grid
+balance_area = st.empty()
+grid_area = st.empty()
+notif_area = st.empty()
 
 def tampilkan_grid(hasil, warna="white"):
     grid_html = "<div style='display:grid;grid-template-columns:repeat(3,80px);gap:5px;'>"
     for s in hasil:
         grid_html += f"<div style='border:2px solid gold;padding:10px;text-align:center;font-size:30px;color:{warna};'>{s}</div>"
     grid_html += "</div>"
-    st.markdown(grid_html, unsafe_allow_html=True)
+    grid_area.markdown(grid_html, unsafe_allow_html=True)
 
-st.markdown(f"**Balance: {st.session_state.modal} credit**")
+balance_area.markdown(f"**Balance: {st.session_state.modal} credit**")
 tampilkan_grid(st.session_state.grid_display)
 
+# SPIN MANUAL
 if st.button("Spin Sekali"):
     if st.session_state.modal < harga_per_spin:
-        st.error("Modal tidak cukup")
+        notif_area.error("Modal tidak cukup")
     else:
         st.session_state.modal -= harga_per_spin
         st.session_state.counter_spin += 1
@@ -72,17 +80,22 @@ if st.button("Spin Sekali"):
             st.session_state.modal += hadiah
             st.session_state.total_kembali += hadiah
 
+        st.session_state.grid_display = hasil
         tampilkan_grid(hasil, "gold" if hadiah > 0 else "white")
-        st.markdown(f"**Balance: {st.session_state.modal} credit**")
-        if hadiah > 0:
-            st.success(f"🎉 Menang {hadiah} credit!")
+        balance_area.markdown(f"**Balance: {st.session_state.modal} credit**")
 
+        if hadiah > 0:
+            notif_area.success(f"🎉 Menang {hadiah} credit!")
+        else:
+            notif_area.empty()
+
+# AUTO SPIN
 with st.expander("Auto Spin (Atur Jumlah Spin)"):
     total_spin_auto = st.number_input("Jumlah Spin", 1, 500, 50, 1)
     if st.button("Start Auto Spin"):
         for _ in range(total_spin_auto):
             if st.session_state.modal < harga_per_spin:
-                st.warning("Modal habis, Auto Spin berhenti.")
+                notif_area.warning("Modal habis, Auto Spin berhenti.")
                 break
 
             st.session_state.modal -= harga_per_spin
@@ -103,11 +116,13 @@ with st.expander("Auto Spin (Atur Jumlah Spin)"):
                 st.session_state.modal += hadiah
                 st.session_state.total_kembali += hadiah
 
+            st.session_state.grid_display = hasil
             tampilkan_grid(hasil, "gold" if hadiah > 0 else "white")
-            st.markdown(f"**Balance: {st.session_state.modal} credit**")
+            balance_area.markdown(f"**Balance: {st.session_state.modal} credit**")
 
             time.sleep(0.1)
 
+# SIMULASI CEPAT
 with st.expander("Simulasi Tanpa Animasi"):
     total_simulasi = st.number_input("Jumlah Spin Simulasi", 10, 100_000, 1000, 100)
     if st.button("Mulai Simulasi"):
@@ -142,10 +157,11 @@ with st.expander("Simulasi Tanpa Animasi"):
                 total_menang += 1
 
         st.session_state.modal = modal
-        st.markdown(f"**Balance: {modal} credit**")
+        balance_area.markdown(f"**Balance: {modal} credit**")
         rtp_real = (total_kembali / (spin * harga_per_spin)) * 100
-        st.info(f"Total Menang: {total_menang} | Total Kembali: {total_kembali} credit | RTP Realisasi: {rtp_real:.2f}%")
-        st.info(f"Jackpot besar muncul di spin ke-{jackpot_ke}")
+        notif_area.info(f"Total Menang: {total_menang} | Total Kembali: {total_kembali} credit | RTP Realisasi: {rtp_real:.2f}%")
+        notif_area.info(f"Jackpot besar muncul di spin ke-{jackpot_ke}")
+
 
 
 
