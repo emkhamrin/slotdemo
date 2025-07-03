@@ -148,8 +148,10 @@ if st.button("Mulai Simulasi"):
     total_kembali = 0
     jackpot_terjadi = st.session_state.jackpot_terjadi
     total_menang = 0
-    total_biaya = 0
-    target_jackpot_min_biaya = st.session_state.jackpot_min_biaya - st.session_state.total_biaya
+
+    # TOTAL BIAYA harus mengacu ke total biaya AKUMULASI global
+    total_biaya = st.session_state.total_biaya
+    target_jackpot_min_biaya = st.session_state.jackpot_min_biaya
 
     for spin in range(1, total_simulasi + 1):
         if modal < harga_per_spin:
@@ -167,6 +169,10 @@ if st.button("Mulai Simulasi"):
             hasil = ['🔔', '🔔', '🔔']
             hadiah = prize_table['🔔']
             jackpot_terjadi = True
+
+            # Tambahkan ambang batas jackpot selanjutnya
+            st.session_state.jackpot_min_biaya += prize_table['🔔']
+
         elif hasil[0] == hasil[1] == hasil[2]:
             hadiah = prize_table.get(hasil[0], 0)
 
@@ -174,9 +180,10 @@ if st.button("Mulai Simulasi"):
         total_kembali += hadiah
         total_menang += 1 if hadiah > 0 else 0
 
+    # Update ke session state global
     st.session_state.modal = modal
     st.session_state.total_kembali += total_kembali
-    st.session_state.total_biaya += total_biaya
+    st.session_state.total_biaya = total_biaya
     st.session_state.jackpot_terjadi = jackpot_terjadi
 
     balance_area.markdown(f"**Balance: {modal} credit**")
