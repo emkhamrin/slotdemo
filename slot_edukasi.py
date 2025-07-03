@@ -1,5 +1,6 @@
 import streamlit as st
 import random
+import time
 
 st.set_page_config(page_title="🎰 Chinese Luck Slot - Edukasi Anti Judi", layout="centered")
 
@@ -131,6 +132,49 @@ if col1.button("Spin Sekali"):
             hasil_area.markdown(f"<div class='big-win'>YOU WIN {hadiah} credit!</div>", unsafe_allow_html=True)
         else:
             hasil_area.empty()
+
+if col2.button("Auto Spin 50x"):
+    total_spin_auto = 50
+    for spin in range(total_spin_auto):
+        if st.session_state.modal < harga_per_spin:
+            st.warning("Modal habis, auto spin berhenti.")
+            break
+
+        st.session_state.modal -= harga_per_spin
+
+        weights = weights_sulit if st.session_state.jackpot_terjadi else weights_awal
+        hasil_final = random.choices(symbols, weights, k=3)
+        hadiah = 0
+
+        if st.session_state.jackpot_ke == 1:
+            hasil_final = ['🔔', '🔔', '🔔']
+            hadiah = prize_table['🔔']
+            st.session_state.jackpot_terjadi = True
+        elif hasil_final[0] == hasil_final[1] == hasil_final[2]:
+            simbol_menang = hasil_final[0]
+            hadiah = prize_table.get(simbol_menang, 0)
+
+        if st.session_state.total_kembali + hadiah <= (harga_per_spin * target_rtp * 0.01):
+            st.session_state.modal += hadiah
+            st.session_state.total_kembali += hadiah
+
+        st.session_state.grid_display = hasil_final
+
+        grid_html = "<div class='slot-grid'>"
+        for i, s in enumerate(hasil_final):
+            warna = "gold" if hadiah > 0 else "white"
+            grid_html += f"<div class='slot-cell' style='color:{warna};'>{s}</div>"
+        grid_html += "</div>"
+        grid_area.markdown(grid_html, unsafe_allow_html=True)
+
+        saldo_area.markdown(f"<div class='balance-box'>Balance: {st.session_state.modal} credit</div>", unsafe_allow_html=True)
+
+        if hadiah > 0:
+            hasil_area.markdown(f"<div class='big-win'>YOU WIN {hadiah} credit!</div>", unsafe_allow_html=True)
+        else:
+            hasil_area.empty()
+
+        time.sleep(0.1)
 
 with st.expander("Simulasi Tanpa Animasi"):
     total_spin_sim = st.number_input("Total Spin Simulasi", min_value=10, value=1000, step=100)
