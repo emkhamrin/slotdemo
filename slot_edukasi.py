@@ -184,7 +184,7 @@ if st.button("Mulai Simulasi"):
     balance_area.markdown(f"**Balance: {modal} credit**")
     rtp_real = (total_kembali / total_biaya) * 100 if total_biaya > 0 else 0
 
-    st.info(f"Total Menang: {total_menang} | Total Kembali: {total_kembali} credit | RTP Realisasi: {rtp_real:.2f}%")
+    st.info(f"Total Menang: {total_menang} | Total Kembali: {total_kembali} credit | Jumlah Jackpot: {jackpot_terjadi} kali | RTP Realisasi: {rtp_real:.2f}%")
 
 
 
